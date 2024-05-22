@@ -1,0 +1,7 @@
+name: UCEAP AES
+description: "Provides AES encryption method for Encrypt using the OpenSSL extension for PHP."
+core_version_requirement: ^10
+type: module
+package: UCEAP
+dependencies:
+  - encrypt:encrypt

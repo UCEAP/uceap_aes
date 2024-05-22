@@ -1,0 +1,37 @@
+<?php
+/**
+ * @file
+ * Holds installation hooks for UCEAP AES.
+ */
+
+use Drupal\uceap_aes\Plugin\EncryptionMethod\UceapAesEncryptionMethod;
+
+/**
+ * Implements hook_requirements().
+ */
+function uceap_aes_requirements($phase) {
+  $requirements = [];
+
+  $requirements['openssl'] = [
+    'title' => t('PHP OpenSSL extension'),
+  ];
+  if (function_exists('openssl_get_cipher_methods')) {
+    $ciphers = openssl_get_cipher_methods(true);
+    if (array_search(UceapAesEncryptionMethod::CIPHER, $ciphers)) {
+      $requirements['openssl']['severity'] = REQUIREMENT_OK;
+      $requirements['openssl']['value'] = 'Installed and supports ' . UceapAesEncryptionMethod::CIPHER;
+    }
+    else {
+      $requirements['openssl']['severity'] = REQUIREMENT_ERROR;
+      $requirements['openssl']['value'] = UceapAesEncryptionMethod::CIPHER . ' not available';
+      $requirements['openssl']['description'] = 'Please check your PHP installation to ensure the OpenSSL extension supports ' . UceapAesEncryptionMethod::CIPHER;
+    }
+  }
+  else {
+    $requirements['openssl']['severity'] = REQUIREMENT_ERROR;
+    $requirements['openssl']['value'] = 'Not Installed';
+    $requirements['openssl']['description'] = 'Please check your PHP installation to ensure the OpenSSL extension is installed.';
+  }
+
+  return $requirements;
+}
